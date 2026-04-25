@@ -5,10 +5,10 @@ const { useState: useState4, useEffect: useEffect4 } = React;
 // ─────────────── Step 4: Preferences ───────────────
 function StepPrefs({ data, update, onNext, onBack }) {
   const parks = [
-    { id: 'orlando-magic', name: 'Orlando Reinos', sub: '4 parques de fantasía', art: <ParkArtCastle /> },
-    { id: 'orlando-thrills', name: 'Orlando Aventuras', sub: '3 parques · incluye Epic', art: <ParkArtCoaster /> },
-    { id: 'paris', name: 'París', sub: 'Magia europea · 2 parques', art: <ParkArtEiffel /> },
-    { id: 'water', name: 'Parques de Agua', sub: 'Toboganes y piletas', art: <ParkArtWater /> },
+    { id: 'orlando-magic', name: '🏰 Disney', sub: 'Magic Kingdom, Animal Kingdom, Epcot y Hollywood Studios.', art: <ParkArtCastle /> },
+    { id: 'orlando-thrills', name: '🌎 UNIVERSAL', sub: 'Islas de la Aventura, Universal Studios y Epic.', art: <ParkArtCoaster /> },
+    { id: 'paris', name: '🇫🇷 Disneyland Paris', sub: '', art: <ParkArtEiffel /> },
+    { id: 'water', name: '💦 Parques de Agua', sub: '', art: <ParkArtWater /> },
   ];
 
   const toggleParkmt = (id) => {
@@ -19,9 +19,9 @@ function StepPrefs({ data, update, onNext, onBack }) {
   };
 
   const cotizarOptions = [
-    { id: 'tickets-hotel', icon: <><IconCastle size={20} /><IconHotel size={20} /></>, title: 'Tickets + Hotel', sub: 'El paquete completo' },
-    { id: 'tickets', icon: <IconTicket size={22} />, title: 'Solo tickets', sub: 'Para los parques' },
-    { id: 'hotel', icon: <IconHotel size={22} />, title: 'Solo hotel', sub: 'Alojamiento' },
+    { id: 'tickets-hotel', icon: <><IconCastle size={20} /><IconHotel size={20} /></>, title: '🏰🎟️ Tickets + Hotel', sub: '' },
+    { id: 'tickets', icon: <IconTicket size={22} />, title: '🎟️ Solo tickets', sub: '' },
+    { id: 'hotel', icon: <IconHotel size={22} />, title: '🏨 Solo hotel', sub: '' },
   ];
 
   const valid = data.parks.length > 0 && data.cotizar;
@@ -30,7 +30,13 @@ function StepPrefs({ data, update, onNext, onBack }) {
     <div className="step-body">
       <div className="step-eyebrow">Capítulo 3</div>
       <h2 className="step-title">Tu viaje <em>ideal</em></h2>
-      <p className="step-subtitle">Marcá los parques que te gustaría visitar (podés elegir varios).</p>
+
+      <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
+        ¿Qué parques te gustaría visitar? <span className="field-required">*</span>
+      </label>
+      <p style={{ fontSize: 13, color: 'var(--marron-mute)', marginTop: -4, marginBottom: 14, lineHeight: 1.5 }}>
+        (Podés seleccionar más de una opción)
+      </p>
 
       <div className="park-grid">
         {parks.map(p => (
@@ -45,14 +51,16 @@ function StepPrefs({ data, update, onNext, onBack }) {
             </div>
             <div className="park-meta">
               <div className="park-name">{p.name}</div>
-              <div className="park-sub">{p.sub}</div>
+              {p.sub && <div className="park-sub">{p.sub}</div>}
             </div>
           </button>
         ))}
       </div>
 
       <div className="field">
-        <label className="field-label">¿Algún parque o atracción específica?</label>
+        <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
+          Si ya tenés definidos parques específicos, podés detallarlos acá: <span className="field-required">*</span>
+        </label>
         <input
           className="input"
           placeholder="Opcional · contame lo que no te puede faltar"
@@ -61,7 +69,7 @@ function StepPrefs({ data, update, onNext, onBack }) {
         />
       </div>
 
-      <div className="section-divider"><span>¿Qué cotizamos?</span></div>
+      <div className="section-divider"><span>¿Qué te gustaría cotizar? *</span></div>
 
       {cotizarOptions.map(opt => (
         <button
@@ -72,7 +80,6 @@ function StepPrefs({ data, update, onNext, onBack }) {
           <div className="choice-icon" style={{ display: 'flex', gap: 4 }}>{opt.icon}</div>
           <div className="choice-text">
             <div className="choice-title">{opt.title}</div>
-            <div className="choice-sub">{opt.sub}</div>
           </div>
           <div className="choice-check">
             {data.cotizar === opt.id && <IconCheck size={14} />}
@@ -100,23 +107,27 @@ function StepPrefs({ data, update, onNext, onBack }) {
 function StepLodging({ data, update, onNext, onBack }) {
   const includesHotel = data.cotizar === 'tickets-hotel' || data.cotizar === 'hotel';
 
-  // If no hotel, just skip — but we still render a friendly skip card so flow makes sense
+  // If no hotel, show tickets-only view
   if (!includesHotel) {
     return (
       <div className="step-body" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '100%' }}>
         <div className="step-eyebrow">Capítulo 4</div>
         <h2 className="step-title">Solo <em>tickets</em>, entonces</h2>
-        <p className="step-subtitle">Saltamos la parte de alojamiento. Seguimos al cierre.</p>
 
         <div className="info-card" style={{ marginTop: 8 }}>
-          <div className="info-icon"><IconSuitcase size={16} /></div>
+          <div className="info-icon"><IconInfo size={16} /></div>
           <div className="info-text">
-            Si más adelante querés que te arme un hotel, charlamos sin compromiso.
+            Si estás interesado/a únicamente en tickets, no es necesario completar esta sección.
           </div>
         </div>
 
         <div className="field" style={{ marginTop: 18 }}>
-          <label className="field-label">¿Cómo imaginás tu viaje?</label>
+          <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
+            Contame cómo te imaginás tu viaje: qué te gustaría priorizar y qué tipo de experiencia estás buscando. <span className="field-required">*</span>
+          </label>
+          <p style={{ fontSize: 13, color: 'var(--marron-mute)', marginTop: -4, marginBottom: 10, lineHeight: 1.5 }}>
+            (Podés mencionar si preferís una opción económica, intermedia o más exclusiva) ✨
+          </p>
           <textarea
             className="textarea"
             placeholder="Lo que sea importante: aniversario, primera vez, fechas especiales..."
@@ -126,7 +137,9 @@ function StepLodging({ data, update, onNext, onBack }) {
         </div>
 
         <div className="field">
-          <label className="field-label">Comentarios o pedidos especiales</label>
+          <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
+            Si querés, podés usar este espacio para sumar comentarios, dudas o algún pedido especial para tu viaje. 🌟
+          </label>
           <textarea
             className="textarea"
             style={{ minHeight: 80 }}
@@ -150,9 +163,9 @@ function StepLodging({ data, update, onNext, onBack }) {
 
   // ─── Lodging form ───
   const ubicaciones = [
-    { id: 'dentro', icon: <IconCastle size={20} />, title: 'Dentro de los parques', sub: 'Beneficios exclusivos · transporte · early entry' },
-    { id: 'fuera', icon: <IconHotel size={20} />, title: 'Fuera de los parques', sub: 'Más opciones · mejor relación calidad-precio' },
-    { id: 'mixto', icon: <IconScale size={20} />, title: 'Combiná lo mejor', sub: 'Algunas noches dentro, otras fuera' },
+    { id: 'dentro', icon: <IconCastle size={20} />, title: 'Dentro de los parques (hoteles Disney / Universal)', sub: '' },
+    { id: 'fuera', icon: <IconHotel size={20} />, title: 'Fuera de los parques', sub: '' },
+    { id: 'mixto', icon: <IconScale size={20} />, title: 'Me gustaría evaluar ambas opciones', sub: '' },
   ];
 
   const styles = [
@@ -209,18 +222,28 @@ function StepLodging({ data, update, onNext, onBack }) {
   return (
     <div className="step-body">
       <div className="step-eyebrow">Capítulo 4</div>
-      <h2 className="step-title">Sobre el <em>alojamiento</em></h2>
-      <p className="step-subtitle">Cuanto más sepa, mejor te puedo armar tu hotel.</p>
+      <h2 className="step-title">🏨 Sobre el <em>alojamiento</em></h2>
 
       <div className="info-card">
         <div className="info-icon"><IconInfo size={16} /></div>
         <div className="info-text">
-          <strong>Importante:</strong> el titular de la reserva debe tener <strong>18+</strong> para
-          hoteles tipo "reino" y <strong>21+</strong> para hoteles tipo "aventuras".
+          👉 Para poder armar tu cotización de forma correcta, por favor detallá la cantidad total de pasajeros y cómo se alojarían en cada habitación.
         </div>
       </div>
 
-      <label className="field-label">¿Dentro o fuera de los parques?</label>
+      <div className="info-card" style={{ marginTop: 10 }}>
+        <div className="info-icon"><IconInfo size={16} /></div>
+        <div className="info-text">
+          💡 Importante: el titular de la reserva debe ser mayor de 18 años para hoteles Disney y mayor de 21 años para hoteles Universal.
+        </div>
+      </div>
+
+      <label className="field-label" style={{ marginTop: 18, textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
+        ¿Te gustaría alojarte dentro o fuera de los parques?
+      </label>
+      <p style={{ fontSize: 13, color: 'var(--marron-mute)', marginTop: -4, marginBottom: 14, lineHeight: 1.5 }}>
+        (Los hoteles dentro de los parques incluyen beneficios exclusivos como transporte y horas extra en parques.)
+      </p>
       {ubicaciones.map(opt => (
         <button
           key={opt.id}
@@ -230,7 +253,6 @@ function StepLodging({ data, update, onNext, onBack }) {
           <div className="choice-icon">{opt.icon}</div>
           <div className="choice-text">
             <div className="choice-title">{opt.title}</div>
-            <div className="choice-sub">{opt.sub}</div>
           </div>
           <div className="choice-check">
             {data.ubicacion === opt.id && <IconCheck size={14} />}
@@ -345,7 +367,12 @@ function StepLodging({ data, update, onNext, onBack }) {
       </div>
 
       <div className="field" style={{ marginTop: 18 }}>
-        <label className="field-label">Contame cómo imaginás tu viaje</label>
+        <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
+          Contame cómo te imaginás tu viaje: qué te gustaría priorizar y qué tipo de experiencia estás buscando. <span className="field-required">*</span>
+        </label>
+        <p style={{ fontSize: 13, color: 'var(--marron-mute)', marginTop: -4, marginBottom: 10, lineHeight: 1.5 }}>
+          (Podés mencionar si preferís una opción económica, intermedia o más exclusiva) ✨
+        </p>
         <textarea
           className="textarea"
           placeholder="Aniversario, primera vez, lo que vos quieras..."
@@ -355,7 +382,9 @@ function StepLodging({ data, update, onNext, onBack }) {
       </div>
 
       <div className="field">
-        <label className="field-label">Comentarios o pedidos especiales</label>
+        <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
+          Si querés, podés usar este espacio para sumar comentarios, dudas o algún pedido especial para tu viaje. 🌟
+        </label>
         <textarea
           className="textarea"
           style={{ minHeight: 80 }}
@@ -386,10 +415,10 @@ function StepSummary({ data, onSubmit, onBack, onJump }) {
   const country = COUNTRIES.find(c => c.code === data.country) || COUNTRIES[0];
 
   const parkLabels = {
-    'orlando-magic': 'Orlando Reinos',
-    'orlando-thrills': 'Orlando Aventuras',
-    'paris': 'París',
-    'water': 'Parques de Agua',
+    'orlando-magic': '🏰 Disney',
+    'orlando-thrills': '🌎 UNIVERSAL',
+    'paris': '🇫🇷 Disneyland Paris',
+    'water': '💦 Parques de Agua',
   };
 
   const dateLabels = {
@@ -399,15 +428,15 @@ function StepSummary({ data, onSubmit, onBack, onJump }) {
   };
 
   const cotizarLabels = {
-    'tickets-hotel': 'Tickets + Hotel',
-    'tickets': 'Solo tickets',
-    'hotel': 'Solo hotel',
+    'tickets-hotel': '🏰🎟️ Tickets + Hotel',
+    'tickets': '🎟️ Solo tickets',
+    'hotel': '🏨 Solo hotel',
   };
 
   const ubicLabels = {
     'dentro': 'Dentro de los parques',
     'fuera': 'Fuera de los parques',
-    'mixto': 'Combinación',
+    'mixto': 'Evaluar ambas opciones',
   };
 
   const styleLabels = {
@@ -440,7 +469,7 @@ function StepSummary({ data, onSubmit, onBack, onJump }) {
           <button className="summary-edit" onClick={() => onJump(2)}>editar</button>
         </div>
         <div className="summary-row"><span className="k">Duración</span><span className="v">{data.days} días</span></div>
-        <div className="summary-row"><span className="k">Fechas</span><span className="v">{dateLabels[data.dateType]}{data.dates ? ` · ${data.dates}` : ''}</span></div>
+        <div className="summary-row"><span className="k">Fechas</span><span className="v">{dateLabels[data.dateType]}{data.dateFrom ? ` · ${data.dateFrom} al ${data.dateTo}` : data.dates ? ` · ${data.dates}` : ''}</span></div>
         <div className="summary-row">
           <span className="k">Viajeros</span>
           <span className="v">
@@ -485,7 +514,7 @@ function StepSummary({ data, onSubmit, onBack, onJump }) {
             <button className="summary-edit" onClick={() => onJump(4)}>editar</button>
           </div>
           {data.imagina && (
-            <div style={{ fontSize: 13, color: 'var(--marron-soft)', fontStyle: 'italic', fontFamily: 'var(--serif)', fontSize: 16, lineHeight: 1.4, paddingTop: 4 }}>
+            <div style={{ fontSize: 16, color: 'var(--marron-soft)', fontStyle: 'italic', fontFamily: 'var(--serif)', lineHeight: 1.4, paddingTop: 4 }}>
               "{data.imagina}"
             </div>
           )}
@@ -502,7 +531,7 @@ function StepSummary({ data, onSubmit, onBack, onJump }) {
         fontFamily: 'var(--serif)', fontStyle: 'italic',
         fontSize: 18, color: 'var(--borgona)', lineHeight: 1.4,
       }}>
-        Gracias por confiar en mí <IconSparkle size={14} />
+        Gracias por tomarte el tiempo de completar el formulario! <IconSparkle size={14} />
       </div>
 
       <div className="bottom-cta">
@@ -559,14 +588,10 @@ function SuccessScreen({ data, onReset }) {
       <h2 className="success-title">¡Solicitud<br/>enviada!</h2>
 
       <p className="success-msg">
-        Gracias <strong style={{ color: 'var(--borgona)' }}>{data.firstName || 'por confiar'}</strong>,
-        ya tengo todos tus datos. En las próximas <strong style={{ color: 'var(--borgona)' }}>24 a 48 hs</strong> me
-        contacto con vos por WhatsApp o email con tu propuesta personalizada.
+        Gracias por tomarte el tiempo de completar el formulario!
+        <br /><br />
+        En breve me voy a contactar con vos para empezar a diseñar tu viaje ✨🫶 💕
       </p>
-
-      <div className="success-meta">
-        <IconWhatsApp size={14} stroke="var(--borgona)" /> Te escribo a {data.email || 'tu email'}
-      </div>
 
       <button
         className="btn btn-ghost"

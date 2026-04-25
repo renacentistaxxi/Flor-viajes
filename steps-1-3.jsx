@@ -4,7 +4,6 @@ const { useState, useEffect, useRef, useMemo } = React;
 
 // ─────────────── Step 1: Hero ───────────────
 function StepHero({ onNext }) {
-  // randomize sparkle positions once
   const sparkles = useMemo(() =>
     Array.from({ length: 14 }, (_, i) => ({
       id: i,
@@ -50,7 +49,7 @@ function StepHero({ onNext }) {
           </p>
         </div>
 
-        <p style={{ fontSize: 13, color: 'var(--marron-mute)', lineHeight: 1.5, fontStyle: 'italic', fontFamily: 'var(--serif)', fontSize: 16 }}>
+        <p style={{ fontSize: 16, color: 'var(--marron-mute)', lineHeight: 1.5, fontStyle: 'italic', fontFamily: 'var(--serif)' }}>
           Vos soñás, yo lo hago realidad. <IconSparkle size={14} />
         </p>
       </div>
@@ -154,7 +153,7 @@ function StepContact({ data, update, onNext, onBack }) {
           <div className="country-select" ref={dropdownRef} onClick={(e) => { e.stopPropagation(); setShowCountries(!showCountries); }}>
             <div className="country-flag" style={{ background: country.flag }} />
             <span style={{ fontSize: 13 }}>{country.dial}</span>
-            <IconChevron size={12} style={{ marginLeft: 'auto', transform: showCountries ? 'rotate(90deg)' : 'rotate(90deg)' }} />
+            <IconChevron size={12} style={{ marginLeft: 'auto', transform: 'rotate(90deg)' }} />
             {showCountries && (
               <div className="country-dropdown" onClick={(e) => e.stopPropagation()}>
                 {COUNTRIES.map(c => (
@@ -216,18 +215,22 @@ function StepLogistics({ data, update, onNext, onBack }) {
   const removeChild = () => update({ children: data.children.slice(0, -1) });
 
   const dateOptions = [
-    { id: 'definidas', label: 'Tengo fechas definidas', icon: <IconCalendar size={20} />, sub: 'Sé exactamente cuándo viajo' },
-    { id: 'aproximadas', label: 'Tengo fechas aproximadas', icon: <IconCalendarSoft size={20} />, sub: 'Tengo un mes o ventana en mente' },
-    { id: 'indefinidas', label: 'Aún no lo defino', icon: <IconCloud size={20} />, sub: 'Charlemos las mejores opciones' },
+    { id: 'definidas', label: 'Ya tengo fechas definidas', icon: <IconCalendar size={20} /> },
+    { id: 'aproximadas', label: 'Tengo fechas aproximadas (soy flexible)', icon: <IconCalendarSoft size={20} /> },
+    { id: 'indefinidas', label: 'Aún no lo tengo definido', icon: <IconCloud size={20} /> },
   ];
 
   return (
     <div className="step-body">
       <div className="step-eyebrow">Capítulo 2</div>
       <h2 className="step-title">El <em>cuándo</em> y el <em>cuántos</em></h2>
-      <p className="step-subtitle">Estos datos me ayudan a empezar a armar tu propuesta.</p>
 
-      <label className="field-label">Cantidad de días</label>
+      <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
+        ¿Cuántos días te gustaría que dure tu viaje? <span className="field-required">*</span>
+      </label>
+      <p style={{ fontSize: 13, color: 'var(--marron-mute)', marginTop: -4, marginBottom: 14, lineHeight: 1.5 }}>
+        (Incluí días de parques, descanso, compras o cualquier otra actividad que quieras sumar.)
+      </p>
       <div className="style-slider-wrap" style={{ padding: '12px 16px 18px' }}>
         <div className="days-display">
           <div className="days-num"><em>{data.days}</em></div>
@@ -246,7 +249,9 @@ function StepLogistics({ data, update, onNext, onBack }) {
         </div>
       </div>
 
-      <label className="field-label" style={{ marginTop: 8 }}>¿Cuándo te gustaría viajar?</label>
+      <label className="field-label" style={{ marginTop: 8, textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
+        ¿Cuándo te gustaría viajar? <span className="field-required">*</span>
+      </label>
       {dateOptions.map(opt => (
         <button
           key={opt.id}
@@ -256,7 +261,6 @@ function StepLogistics({ data, update, onNext, onBack }) {
           <div className="choice-icon">{opt.icon}</div>
           <div className="choice-text">
             <div className="choice-title">{opt.label}</div>
-            <div className="choice-sub">{opt.sub}</div>
           </div>
           <div className="choice-check">
             {data.dateType === opt.id && <IconCheck size={14} />}
@@ -264,14 +268,56 @@ function StepLogistics({ data, update, onNext, onBack }) {
         </button>
       ))}
 
-      {(data.dateType === 'definidas' || data.dateType === 'aproximadas') && (
+      {data.dateType === 'definidas' && (
+        <div style={{ marginTop: 14 }}>
+          <label className="field-label" style={{ textTransform: 'none', fontSize: 13, letterSpacing: 0 }}>
+            Seleccioná tus fechas
+          </label>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
+            <div className="field" style={{ flex: 1, marginBottom: 0 }}>
+              <label className="field-label">Desde</label>
+              <input
+                type="date"
+                className="input"
+                value={data.dateFrom || ''}
+                onChange={(e) => update({ dateFrom: e.target.value })}
+              />
+            </div>
+            <div className="field" style={{ flex: 1, marginBottom: 0 }}>
+              <label className="field-label">Hasta</label>
+              <input
+                type="date"
+                className="input"
+                value={data.dateTo || ''}
+                onChange={(e) => update({ dateTo: e.target.value })}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {data.dateType === 'aproximadas' && (
         <div className="field" style={{ marginTop: 14 }}>
-          <label className="field-label">
-            {data.dateType === 'definidas' ? 'Fechas estimadas' : 'Mes o ventana aproximada'}
+          <label className="field-label" style={{ textTransform: 'none', fontSize: 13, letterSpacing: 0 }}>
+            Si querés, podés detallar fechas o mes estimado:
           </label>
           <input
             className="input"
-            placeholder={data.dateType === 'definidas' ? 'Ej: 14 al 24 de julio' : 'Ej: segunda quincena de julio'}
+            placeholder="Ej: 10 al 20 de octubre / Enero 2027 / flexible"
+            value={data.dates}
+            onChange={(e) => update({ dates: e.target.value })}
+          />
+        </div>
+      )}
+
+      {data.dateType === 'indefinidas' && (
+        <div className="field" style={{ marginTop: 14 }}>
+          <label className="field-label" style={{ textTransform: 'none', fontSize: 13, letterSpacing: 0 }}>
+            Si querés, podés agregar más detalles
+          </label>
+          <input
+            className="input"
+            placeholder="Ej: preferimos verano / evitar temporada alta"
             value={data.dates}
             onChange={(e) => update({ dates: e.target.value })}
           />
@@ -279,6 +325,13 @@ function StepLogistics({ data, update, onNext, onBack }) {
       )}
 
       <div className="section-divider"><span>Viajeros</span></div>
+
+      <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0, marginBottom: 4 }}>
+        ¿Cuántas personas viajan? <span className="field-required">*</span>
+      </label>
+      <p style={{ fontSize: 13, color: 'var(--marron-mute)', marginBottom: 14, lineHeight: 1.5 }}>
+        (Detallá cantidad de adultos y, en caso de viajar con menores, indicá sus edades al momento del viaje)
+      </p>
 
       <div className="counter-row">
         <div className="counter-label-block">

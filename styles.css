@@ -380,7 +380,10 @@ body {
 
 /* ────────────────── Step content layout ────────────────── */
 .step-body {
-  padding: 100px 22px 120px;
+  padding: 100px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 }
 
 .step-eyebrow {
@@ -416,17 +419,19 @@ body {
 }
 
 /* Bottom CTA bar */
+/* Bottom CTA bar */
 .bottom-cta {
-  position: absolute;
+  position: sticky;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 24px 22px 40px;
+  padding: 16px 22px 32px;
   background: linear-gradient(to top, var(--crema) 55%, rgba(250, 246, 241, 0.92) 80%, rgba(250, 246, 241, 0) 100%);
   z-index: 20;
   display: flex;
   gap: 10px;
   align-items: center;
+  margin-top: auto;
 }
 
 /* ────────────────── Inputs ────────────────── */

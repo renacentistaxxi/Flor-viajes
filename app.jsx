@@ -13,6 +13,8 @@ const initialData = {
   days: 7,
   dateType: '',
   dates: '',
+  dateFrom: '',
+  dateTo: '',
   adults: 2,
   children: [],
   parks: [],
