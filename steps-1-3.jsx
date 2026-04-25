@@ -225,11 +225,11 @@ function StepLogistics({ data, update, onNext, onBack }) {
       <div className="step-eyebrow">Capítulo 2</div>
       <h2 className="step-title">El <em>cuándo</em> y el <em>cuántos</em></h2>
 
-      <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
+      <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0, marginBottom: 4 }}>
         ¿Cuántos días te gustaría que dure tu viaje? <span className="field-required">*</span>
       </label>
-      <p style={{ fontSize: 13, color: 'var(--marron-mute)', marginTop: -4, marginBottom: 14, lineHeight: 1.5 }}>
-        (Incluí días de parques, descanso, compras o cualquier otra actividad que quieras sumar.)
+      <p style={{ fontSize: 13, color: 'var(--marron-soft)', marginTop: 0, marginBottom: 14, lineHeight: 1.5 }}>
+        Incluí días de parques, descanso, compras o cualquier otra actividad que quieras sumar.
       </p>
       <div className="style-slider-wrap" style={{ padding: '12px 16px 18px' }}>
         <div className="days-display">

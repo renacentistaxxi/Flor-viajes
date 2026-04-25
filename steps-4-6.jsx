@@ -103,47 +103,62 @@ function StepPrefs({ data, update, onNext, onBack }) {
   );
 }
 
+// ─────────────── Room Counter Component ───────────────
+function RoomCounter({ label, value, onChange, min = 0, max = 10 }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '10px 0',
+    }}>
+      <span style={{ fontSize: 14, color: 'var(--marron)', fontWeight: 500 }}>{label}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <button type="button" onClick={() => onChange(Math.max(min, value - 1))}
+          disabled={value <= min}
+          style={{
+            width: 32, height: 32, borderRadius: '50%',
+            border: '1.5px solid var(--borde-hover, #D4C4B8)', background: 'transparent',
+            cursor: 'pointer', fontSize: 16, color: 'var(--borgona)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            opacity: value <= min ? 0.3 : 1, fontFamily: 'inherit',
+          }}>−</button>
+        <span style={{
+          fontSize: 18, fontWeight: 600, color: 'var(--marron)',
+          minWidth: 24, textAlign: 'center', fontFamily: 'var(--serif)',
+        }}>{value}</span>
+        <button type="button" onClick={() => onChange(Math.min(max, value + 1))}
+          disabled={value >= max}
+          style={{
+            width: 32, height: 32, borderRadius: '50%',
+            border: '1.5px solid var(--dorado)',
+            background: 'rgba(201,169,97,0.06)',
+            cursor: 'pointer', fontSize: 16, color: 'var(--borgona)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            opacity: value >= max ? 0.3 : 1, fontFamily: 'inherit',
+          }}>+</button>
+      </div>
+    </div>
+  );
+}
+
 // ─────────────── Step 5: Lodging (conditional) ───────────────
 function StepLodging({ data, update, onNext, onBack }) {
   const includesHotel = data.cotizar === 'tickets-hotel' || data.cotizar === 'hotel';
 
-  // If no hotel, show tickets-only view
+  // If no hotel — skip straight to comments, no info card
   if (!includesHotel) {
     return (
-      <div className="step-body" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '100%' }}>
+      <div className="step-body">
         <div className="step-eyebrow">Capítulo 4</div>
-        <h2 className="step-title">Solo <em>tickets</em>, entonces</h2>
+        <h2 className="step-title">Casi <em>listo</em></h2>
+        <p className="step-subtitle">Antes de terminar, ¿querés contarme algo más sobre tu viaje?</p>
 
-        <div className="info-card" style={{ marginTop: 8 }}>
-          <div className="info-icon"><IconInfo size={16} /></div>
-          <div className="info-text">
-            Si estás interesado/a únicamente en tickets, no es necesario completar esta sección.
-          </div>
-        </div>
-
-        <div className="field" style={{ marginTop: 18 }}>
-          <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
-            Contame cómo te imaginás tu viaje: qué te gustaría priorizar y qué tipo de experiencia estás buscando. <span className="field-required">*</span>
-          </label>
-          <p style={{ fontSize: 13, color: 'var(--marron-mute)', marginTop: -4, marginBottom: 10, lineHeight: 1.5 }}>
-            (Podés mencionar si preferís una opción económica, intermedia o más exclusiva) ✨
-          </p>
-          <textarea
-            className="textarea"
-            placeholder="Lo que sea importante: aniversario, primera vez, fechas especiales..."
-            value={data.imagina}
-            onChange={(e) => update({ imagina: e.target.value })}
-          />
-        </div>
-
-        <div className="field">
+        <div className="field" style={{ marginTop: 8 }}>
           <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
             Si querés, podés usar este espacio para sumar comentarios, dudas o algún pedido especial para tu viaje. 🌟
           </label>
           <textarea
             className="textarea"
-            style={{ minHeight: 80 }}
-            placeholder="Opcional"
+            placeholder="Aniversario, primera vez, fechas especiales, accesibilidad..."
             value={data.notes}
             onChange={(e) => update({ notes: e.target.value })}
           />
@@ -174,50 +189,34 @@ function StepLodging({ data, update, onNext, onBack }) {
     { id: 'exclusivo', label: 'Exclusivo', icon: <IconDiamond size={16} />, desc: 'La experiencia más completa, sin atajos' },
   ];
 
-  // ── Rooms drag-drop ──
-  const [draggingId, setDraggingId] = useState4(null);
-  const [overTarget, setOverTarget] = useState4(null);
-
-  const allTravelers = [
-    ...Array.from({ length: data.adults }, (_, i) => ({ id: `a${i}`, label: `Adulto ${i + 1}`, type: 'adult' })),
-    ...data.children.map((c, i) => ({ id: `c${c.id}`, label: `Niño ${i + 1}${c.age ? ` · ${c.age}a` : ''}`, type: 'child' })),
-  ];
-
+  // ── Rooms — simple counter-based system ──
   const ensureRooms = () => {
-    if (!data.rooms || data.rooms.length === 0) {
-      update({ rooms: [{ id: 'r1', occupants: [] }] });
-      return [{ id: 'r1', occupants: [] }];
+    if (!data.rooms || data.rooms.length === 0 || !data.rooms[0].adults) {
+      const defaultRooms = [{ id: 'r1', adults: data.adults || 2, children: data.children?.length || 0 }];
+      update({ rooms: defaultRooms });
+      return defaultRooms;
     }
     return data.rooms;
   };
 
   const rooms = ensureRooms();
-  const assignedIds = new Set(rooms.flatMap(r => r.occupants));
-  const poolTravelers = allTravelers.filter(t => !assignedIds.has(t.id));
 
-  const moveTraveler = (travelerId, targetRoomId) => {
-    const newRooms = rooms.map(r => ({
-      ...r,
-      occupants: r.occupants.filter(id => id !== travelerId),
-    }));
-    if (targetRoomId !== 'pool') {
-      const target = newRooms.find(r => r.id === targetRoomId);
-      if (target) target.occupants = [...target.occupants, travelerId];
-    }
+  const updateRoom = (roomId, field, value) => {
+    const newRooms = rooms.map(r =>
+      r.id === roomId ? { ...r, [field]: value } : r
+    );
     update({ rooms: newRooms });
   };
 
   const addRoom = () => {
-    const newId = `r${rooms.length + 1}`;
-    update({ rooms: [...rooms, { id: newId, occupants: [] }] });
+    const newId = `r${Date.now()}`;
+    update({ rooms: [...rooms, { id: newId, adults: 1, children: 0 }] });
   };
 
   const removeRoom = (roomId) => {
     const filtered = rooms.filter(r => r.id !== roomId);
-    update({ rooms: filtered.length ? filtered : [{ id: 'r1', occupants: [] }] });
+    update({ rooms: filtered.length ? filtered : [{ id: 'r1', adults: 2, children: 0 }] });
   };
-
-  const findTraveler = (id) => allTravelers.find(t => t.id === id);
 
   return (
     <div className="step-body">
@@ -262,86 +261,58 @@ function StepLodging({ data, update, onNext, onBack }) {
 
       <div className="section-divider"><span>Distribución de habitaciones</span></div>
 
-      <p style={{ fontSize: 12.5, color: 'var(--marron-mute)', marginTop: -8, marginBottom: 12 }}>
-        Arrastrá viajeros desde abajo, o tocá para asignar.
-      </p>
-
       {rooms.map((room, idx) => (
-        <div
-          key={room.id}
-          className="room-card"
-          onDragOver={(e) => { e.preventDefault(); setOverTarget(room.id); }}
-          onDragLeave={() => setOverTarget(null)}
-          onDrop={(e) => {
-            e.preventDefault();
-            if (draggingId) moveTraveler(draggingId, room.id);
-            setDraggingId(null);
-            setOverTarget(null);
-          }}
-          style={overTarget === room.id ? { borderColor: 'var(--rosa)', background: '#FFF8F4' } : {}}
-        >
-          <div className="room-head">
-            <div className="room-name">Habitación {idx + 1}</div>
+        <div key={room.id} style={{
+          background: '#fff', border: '1.5px solid var(--crema-deep, #F2EBE0)',
+          borderRadius: 'var(--r-md, 14px)', padding: '14px 16px',
+          marginBottom: 12, boxShadow: 'var(--shadow-soft)',
+        }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            marginBottom: 8, paddingBottom: 8,
+            borderBottom: '1px solid rgba(122,46,58,0.06)',
+          }}>
+            <span style={{
+              fontFamily: 'var(--serif)', fontSize: 17, fontWeight: 600,
+              color: 'var(--borgona)', fontStyle: 'italic',
+            }}>
+              Habitación {idx + 1}
+            </span>
             {rooms.length > 1 && (
-              <button className="room-remove" onClick={() => removeRoom(room.id)}>Quitar</button>
+              <button onClick={() => removeRoom(room.id)} style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                fontSize: 12, color: 'var(--marron-mute)', fontFamily: 'inherit',
+                padding: '4px 8px', borderRadius: 8,
+              }}>
+                Quitar
+              </button>
             )}
           </div>
-          <div className="room-occupants">
-            {room.occupants.map(occId => {
-              const t = findTraveler(occId);
-              if (!t) return null;
-              return (
-                <span
-                  key={occId}
-                  className={`occupant-chip ${draggingId === occId ? 'dragging' : ''}`}
-                  draggable
-                  onDragStart={() => setDraggingId(occId)}
-                  onDragEnd={() => setDraggingId(null)}
-                >
-                  {t.type === 'adult' ? <IconUser size={12} /> : <IconChild size={12} />}
-                  {t.label}
-                  <span className="occ-x" onClick={() => moveTraveler(occId, 'pool')}>×</span>
-                </span>
-              );
-            })}
-          </div>
+          <RoomCounter
+            label="Adultos"
+            value={room.adults}
+            onChange={(v) => updateRoom(room.id, 'adults', v)}
+            min={1} max={6}
+          />
+          <RoomCounter
+            label="Niños"
+            value={room.children}
+            onChange={(v) => updateRoom(room.id, 'children', v)}
+            min={0} max={6}
+          />
         </div>
       ))}
 
-      <button className="add-room-btn" onClick={addRoom}>
+      <button onClick={addRoom} style={{
+        width: '100%', padding: '12px', borderRadius: 'var(--r-md, 14px)',
+        border: '1.5px dashed var(--dorado)', background: 'rgba(201,169,97,0.04)',
+        cursor: 'pointer', fontSize: 13, color: 'var(--borgona)',
+        fontFamily: 'inherit', fontWeight: 500,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+        marginBottom: 20,
+      }}>
         <IconPlus size={14} /> Agregar otra habitación
       </button>
-
-      {poolTravelers.length > 0 && (
-        <div
-          className={`occupant-pool ${overTarget === 'pool' ? 'drag-over' : ''}`}
-          style={{ marginTop: 14 }}
-          onDragOver={(e) => { e.preventDefault(); setOverTarget('pool'); }}
-          onDragLeave={() => setOverTarget(null)}
-          onDrop={(e) => {
-            e.preventDefault();
-            if (draggingId) moveTraveler(draggingId, 'pool');
-            setDraggingId(null); setOverTarget(null);
-          }}
-        >
-          <div className="pool-label">Viajeros sin asignar</div>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            {poolTravelers.map(t => (
-              <span
-                key={t.id}
-                className={`occupant-chip ${draggingId === t.id ? 'dragging' : ''}`}
-                draggable
-                onDragStart={() => setDraggingId(t.id)}
-                onDragEnd={() => setDraggingId(null)}
-                onClick={() => rooms.length && moveTraveler(t.id, rooms[0].id)}
-              >
-                {t.type === 'adult' ? <IconUser size={12} /> : <IconChild size={12} />}
-                {t.label}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="section-divider"><span>Estilo de viaje</span></div>
 
@@ -368,14 +339,14 @@ function StepLodging({ data, update, onNext, onBack }) {
 
       <div className="field" style={{ marginTop: 18 }}>
         <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
-          Contame cómo te imaginás tu viaje: qué te gustaría priorizar y qué tipo de experiencia estás buscando. <span className="field-required">*</span>
+          ¿Querés contarnos algo más sobre tu viaje? ✨
         </label>
         <p style={{ fontSize: 13, color: 'var(--marron-mute)', marginTop: -4, marginBottom: 10, lineHeight: 1.5 }}>
-          (Podés mencionar si preferís una opción económica, intermedia o más exclusiva) ✨
+          Opcional — aniversario, primera vez, cumpleaños, algún pedido especial...
         </p>
         <textarea
           className="textarea"
-          placeholder="Aniversario, primera vez, lo que vos quieras..."
+          placeholder="Ej: es nuestro primer viaje juntos, queremos que sea inolvidable"
           value={data.imagina}
           onChange={(e) => update({ imagina: e.target.value })}
         />
@@ -447,6 +418,18 @@ function StepSummary({ data, onSubmit, onBack, onJump }) {
 
   const includesHotel = data.cotizar === 'tickets-hotel' || data.cotizar === 'hotel';
 
+  // Build rooms summary
+  const roomsSummary = data.rooms && data.rooms.length > 0
+    ? data.rooms.map((r, i) => {
+        const parts = [];
+        const adults = r.adults || r.occupants?.filter(id => id.startsWith('a')).length || 0;
+        const kids = r.children || r.occupants?.filter(id => id.startsWith('c')).length || 0;
+        if (adults) parts.push(`${adults} adulto${adults > 1 ? 's' : ''}`);
+        if (kids) parts.push(`${kids} niño${kids > 1 ? 's' : ''}`);
+        return `Hab ${i+1}: ${parts.join(', ') || 'vacía'}`;
+      }).join(' · ')
+    : `${data.rooms?.length || 1} habitación(es)`;
+
   return (
     <div className="step-body">
       <div className="step-eyebrow">Casi listo</div>
@@ -502,7 +485,7 @@ function StepSummary({ data, onSubmit, onBack, onJump }) {
             <button className="summary-edit" onClick={() => onJump(4)}>editar</button>
           </div>
           <div className="summary-row"><span className="k">Ubicación</span><span className="v">{ubicLabels[data.ubicacion] || '—'}</span></div>
-          <div className="summary-row"><span className="k">Habitaciones</span><span className="v">{data.rooms?.length || 1}</span></div>
+          <div className="summary-row"><span className="k">Habitaciones</span><span className="v">{roomsSummary}</span></div>
           <div className="summary-row"><span className="k">Estilo</span><span className="v">{styleLabels[data.style] || '—'}</span></div>
         </div>
       )}
