@@ -60,12 +60,6 @@ function StepHero({ onNext }) {
         </h1>
 
         <div className="hero-intro-block" style={{ flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-          <div className="hero-avatar" style={{
-            width: 72, height: 72, fontSize: 34,
-            backgroundImage: 'url(avatar-flor.png)',
-            backgroundSize: 'cover', backgroundPosition: 'center',
-            color: 'transparent',
-          }}>F</div>
           <div style={{ fontSize: 14, color: 'var(--marron-soft)', lineHeight: 1.65, textAlign: 'center' }}>
             <p style={{ marginBottom: 12 }}>
               Gracias por confiar en mí para planificar tu viaje.
