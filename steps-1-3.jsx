@@ -43,6 +43,14 @@ function StepHero({ onNext }) {
         />
       </div>
 
+      {/* Scroll hint */}
+      <div className="scroll-hint">
+        <span className="scroll-hint-text">deslizá</span>
+        <svg className="scroll-hint-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M7 10l5 5 5-5" />
+        </svg>
+      </div>
+
       <div className="hero-content" style={{ paddingTop: 24 }}>
         <h1 className="hero-title" style={{ fontSize: 38, textAlign: 'center', marginBottom: 16 }}>
           ✨ Cotizá tu
