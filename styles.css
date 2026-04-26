@@ -194,13 +194,14 @@ body {
 
 /* ────────────────── Step 1 — Hero ────────────────── */
 .hero {
-  height: 100%;
+  min-height: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   background: linear-gradient(165deg, var(--crema) 0%, #F8E9E1 50%, var(--rosa-bg) 100%);
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .hero-stars {
