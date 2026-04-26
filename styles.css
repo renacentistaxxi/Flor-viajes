@@ -26,10 +26,15 @@
   --r-lg: 20px;
   --r-xl: 28px;
 
-  /* Shadows */
-  --shadow-soft: 0 4px 20px rgba(122, 46, 58, 0.06), 0 1px 3px rgba(122, 46, 58, 0.04);
-  --shadow-card: 0 8px 28px rgba(122, 46, 58, 0.08), 0 2px 6px rgba(122, 46, 58, 0.04);
-  --shadow-cta: 0 6px 18px rgba(122, 46, 58, 0.28), 0 2px 4px rgba(122, 46, 58, 0.18);
+  /* Shadows ✦ micro — softer, more layered for depth */
+  --shadow-soft: 0 2px 8px rgba(122, 46, 58, 0.04), 0 8px 24px rgba(122, 46, 58, 0.05);
+  --shadow-card: 0 1px 3px rgba(122, 46, 58, 0.04), 0 4px 12px rgba(122, 46, 58, 0.06), 0 16px 40px rgba(122, 46, 58, 0.08);
+  --shadow-cta: 0 2px 6px rgba(122, 46, 58, 0.16), 0 8px 22px rgba(122, 46, 58, 0.32), 0 0 0 1px rgba(92, 31, 42, 0.4) inset;
+  --shadow-glow: 0 0 0 4px rgba(212, 165, 165, 0.15), 0 6px 20px rgba(212, 165, 165, 0.25);
+
+  /* Easing curves ✦ micro */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 * { box-sizing: border-box; }
@@ -67,7 +72,8 @@ body {
   position: absolute;
   inset: 0;
   display: flex;
-  transition: transform 520ms cubic-bezier(0.7, 0, 0.2, 1);
+  /* ✦ micro — smoother, more refined slide */
+  transition: transform 580ms var(--ease-out);
   will-change: transform;
 }
 
@@ -106,13 +112,15 @@ body {
 .chapter-label {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--borgona);
   letter-spacing: 0.2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 70%;
+  /* ✦ micro — fade in chapter label changes */
+  animation: fadeUp 360ms var(--ease-out);
 }
 
 .chapter-counter {
@@ -135,10 +143,24 @@ body {
 .progress-fill {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, var(--rosa), var(--dorado));
+  /* ✦ micro — richer gradient with shimmer */
+  background: linear-gradient(90deg, var(--rosa) 0%, #E0B79A 45%, var(--dorado) 100%);
   border-radius: 2px;
-  transition: transform 520ms cubic-bezier(0.7, 0, 0.2, 1);
+  transition: transform 580ms var(--ease-out);
   transform-origin: left center;
+  box-shadow: 0 0 8px rgba(201, 169, 97, 0.4);
+}
+
+.progress-fill::after {
+  /* ✦ micro — subtle shimmer at the leading edge */
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -2px;
+  bottom: -2px;
+  width: 6px;
+  background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, transparent 70%);
+  border-radius: 50%;
 }
 
 .back-btn {
@@ -161,7 +183,13 @@ body {
   -webkit-backdrop-filter: blur(8px);
 }
 
-.back-btn:hover { background: white; transform: translateX(-2px); }
+.back-btn:hover {
+  background: white;
+  transform: translateX(-2px);
+  /* ✦ micro */
+  box-shadow: 0 2px 8px rgba(122, 46, 58, 0.12);
+}
+.back-btn:active { transform: translateX(-1px) scale(0.95); transition-duration: 80ms; }
 .back-btn:disabled { opacity: 0; pointer-events: none; }
 
 /* ────────────────── Step 1 — Hero ────────────────── */
@@ -216,11 +244,34 @@ body {
   width: 100%;
   height: 160px;
   overflow: hidden;
-  border-radius: 0 0 20px 20px;
+  /* ✦ micro — softer corner radius matching card system + dorado hairline */
+  border-radius: 0 0 24px 24px;
   flex-shrink: 0;
   position: relative;
   z-index: 5;
-  box-shadow: 0 4px 16px rgba(61, 40, 23, 0.12);
+  box-shadow: 0 8px 24px rgba(61, 40, 23, 0.14), 0 2px 6px rgba(61, 40, 23, 0.08);
+}
+
+.hero-banner::after {
+  /* ✦ micro — dorado hairline beneath banner that integrates with content below */
+  content: '';
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--dorado), transparent);
+  opacity: 0.5;
+}
+
+.hero-banner::before {
+  /* ✦ micro — soft vignette at the bottom edge to blend into hero */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 70%, rgba(244, 224, 224, 0.25) 100%);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .hero-banner img {
@@ -352,18 +403,24 @@ body {
 }
 
 .btn-primary {
-  background: var(--borgona);
+  /* ✦ micro — subtle gradient on the primary CTA */
+  background: linear-gradient(180deg, #8A3744 0%, var(--borgona) 60%, var(--borgona-deep) 100%);
   color: var(--crema);
   box-shadow: var(--shadow-cta);
+  letter-spacing: 0.3px;
 }
 
 .btn-primary:hover {
-  background: var(--borgona-deep);
+  background: linear-gradient(180deg, var(--borgona) 0%, var(--borgona-deep) 100%);
   transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(122, 46, 58, 0.32);
+  box-shadow: 0 4px 10px rgba(122, 46, 58, 0.22), 0 14px 32px rgba(122, 46, 58, 0.36), 0 0 0 1px rgba(92, 31, 42, 0.5) inset;
 }
 
-.btn-primary:active { transform: translateY(0); }
+.btn-primary:active {
+  /* ✦ micro — tactile press feedback */
+  transform: translateY(1px) scale(0.995);
+  transition: transform 80ms ease;
+}
 
 .btn-primary::before {
   content: '';
@@ -480,17 +537,19 @@ body {
   border: 1.5px solid rgba(122, 46, 58, 0.12);
   background: white;
   font-family: var(--sans);
-  font-size: 15px;
+  font-size: 16px; /* ✦ micro — 16px to prevent iOS zoom on focus */
   color: var(--marron);
-  transition: all 180ms ease;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
   outline: none;
 }
 
 .input::placeholder { color: var(--marron-mute); opacity: 0.6; }
 
 .input:focus {
+  /* ✦ micro — richer focus ring */
   border-color: var(--rosa);
-  box-shadow: 0 0 0 4px rgba(212, 165, 165, 0.18);
+  box-shadow: var(--shadow-glow);
+  background: #FFFEFC;
 }
 
 .input.valid {
@@ -598,7 +657,8 @@ body {
   gap: 14px;
   text-align: left;
   font-family: var(--sans);
-  transition: all 220ms ease;
+  /* ✦ micro — refined easing */
+  transition: border-color 220ms ease, transform 220ms var(--ease-out), box-shadow 220ms ease, background 280ms ease;
   margin-bottom: 10px;
   position: relative;
 }
@@ -609,10 +669,17 @@ body {
   box-shadow: var(--shadow-soft);
 }
 
+.choice-card:active {
+  /* ✦ micro — press feedback */
+  transform: translateY(0) scale(0.995);
+  transition-duration: 80ms;
+}
+
 .choice-card.selected {
   border-color: var(--borgona);
-  background: linear-gradient(135deg, white, #FCF6F0);
-  box-shadow: 0 0 0 3px rgba(122, 46, 58, 0.08);
+  /* ✦ micro — warmer selected gradient */
+  background: linear-gradient(135deg, #FFFDFA 0%, #FBF1E8 100%);
+  box-shadow: 0 0 0 3px rgba(122, 46, 58, 0.08), 0 4px 12px rgba(122, 46, 58, 0.06);
 }
 
 .choice-card.selected .choice-icon {
@@ -696,6 +763,14 @@ body {
   border-color: var(--borgona);
   background: var(--borgona);
   color: var(--crema);
+  /* ✦ micro */
+  transform: scale(1.06);
+}
+
+.counter-btn:active:not(:disabled) {
+  /* ✦ micro */
+  transform: scale(0.94);
+  transition-duration: 80ms;
 }
 
 .counter-btn:disabled { opacity: 0.3; cursor: not-allowed; }
@@ -787,7 +862,14 @@ body {
 .days-btn:hover {
   background: var(--dorado);
   color: white;
-  transform: scale(1.05);
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(201, 169, 97, 0.3);
+}
+
+.days-btn:active {
+  /* ✦ micro */
+  transform: scale(0.94);
+  transition-duration: 80ms;
 }
 
 .days-presets {
@@ -809,8 +891,18 @@ body {
   transition: all 160ms ease;
 }
 
-.days-preset:hover { border-color: var(--rosa); color: var(--borgona); }
-.days-preset.active { background: var(--borgona); color: var(--crema); border-color: var(--borgona); }
+.days-preset {
+  transition: all 160ms ease;
+}
+.days-preset:hover { border-color: var(--rosa); color: var(--borgona); transform: translateY(-1px); }
+.days-preset:active { transform: translateY(0) scale(0.96); transition-duration: 80ms; }
+.days-preset.active {
+  /* ✦ micro — gradient on active preset */
+  background: linear-gradient(180deg, #8A3744, var(--borgona-deep));
+  color: var(--crema);
+  border-color: var(--borgona);
+  box-shadow: 0 2px 6px rgba(122, 46, 58, 0.25);
+}
 
 /* ────────────────── Park cards (multi-select w/ image area) ────────────────── */
 .park-grid {
@@ -826,7 +918,8 @@ body {
   background: white;
   cursor: pointer;
   overflow: hidden;
-  transition: all 220ms ease;
+  /* ✦ micro — distinct property transitions for smoother feel */
+  transition: border-color 240ms ease, transform 280ms var(--ease-out), box-shadow 280ms ease;
   position: relative;
   text-align: left;
   font-family: var(--sans);
@@ -841,9 +934,17 @@ body {
   box-shadow: var(--shadow-soft);
 }
 
+.park-card:active {
+  /* ✦ micro — press */
+  transform: translateY(-1px) scale(0.992);
+  transition-duration: 100ms;
+}
+
 .park-card.selected {
   border-color: var(--borgona);
-  box-shadow: 0 0 0 3px rgba(122, 46, 58, 0.1), var(--shadow-card);
+  /* ✦ micro — stronger selected presence */
+  box-shadow: 0 0 0 3px rgba(122, 46, 58, 0.12), 0 8px 24px rgba(122, 46, 58, 0.1);
+  transform: translateY(-2px);
 }
 
 .park-image {
@@ -867,19 +968,28 @@ body {
 }
 
 .park-check {
+  /* ✦ micro — bigger, higher contrast, scales in on select */
   position: absolute;
   top: 8px;
   right: 8px;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.9);
-  border: 1.5px solid rgba(122, 46, 58, 0.18);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid rgba(122, 46, 58, 0.22);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 220ms ease;
-  backdrop-filter: blur(4px);
+  transition: all 260ms var(--ease-spring);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.park-card.selected .park-check {
+  /* ✦ micro — pop on select */
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(122, 46, 58, 0.32);
 }
 
 .park-meta {
@@ -959,21 +1069,42 @@ body {
 }
 
 .style-stop {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: white;
   border: 2px solid rgba(122, 46, 58, 0.25);
   cursor: pointer;
   z-index: 2;
-  transition: all 200ms ease;
+  /* ✦ micro — bouncier select feedback */
+  transition: transform 320ms var(--ease-spring), background 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  position: relative;
 }
 
+.style-stop:hover { border-color: var(--rosa); transform: scale(1.15); }
+
 .style-stop.active {
+  /* ✦ micro — gradient fill + pulse halo */
   border-color: var(--borgona);
-  background: var(--borgona);
-  transform: scale(1.3);
-  box-shadow: 0 0 0 4px rgba(122, 46, 58, 0.15);
+  background: radial-gradient(circle, var(--borgona) 0%, var(--borgona-deep) 100%);
+  transform: scale(1.4);
+  box-shadow: 0 0 0 6px rgba(122, 46, 58, 0.12), 0 4px 12px rgba(122, 46, 58, 0.25);
+}
+
+.style-stop.active::before {
+  /* ✦ micro — pulsing halo on the active stop */
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid var(--dorado);
+  opacity: 0;
+  animation: stopPulse 2.4s ease-out infinite;
+}
+
+@keyframes stopPulse {
+  0% { opacity: 0.6; transform: scale(0.9); }
+  100% { opacity: 0; transform: scale(1.6); }
 }
 
 .style-labels {
@@ -994,10 +1125,17 @@ body {
   text-align: center;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 16px;
+  font-size: 17px;
   color: var(--marron-soft);
-  margin-top: 16px;
-  min-height: 22px;
+  margin-top: 18px;
+  min-height: 24px;
+  /* ✦ micro — fade in when style changes */
+  animation: fadeUp 320ms var(--ease-out);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ────────────────── Textarea ────────────────── */
@@ -1009,17 +1147,19 @@ body {
   border: 1.5px solid rgba(122, 46, 58, 0.12);
   background: white;
   font-family: var(--sans);
-  font-size: 14px;
+  font-size: 16px; /* ✦ micro — prevent iOS zoom */
   color: var(--marron);
   line-height: 1.5;
   resize: vertical;
   outline: none;
-  transition: all 180ms ease;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
 .textarea:focus {
+  /* ✦ micro */
   border-color: var(--rosa);
-  box-shadow: 0 0 0 4px rgba(212, 165, 165, 0.18);
+  box-shadow: var(--shadow-glow);
+  background: #FFFEFC;
 }
 
 /* ────────────────── Date input ────────────────── */
@@ -1170,6 +1310,27 @@ body {
   padding: 16px 18px;
   margin-bottom: 12px;
   position: relative;
+  /* ✦ micro — subtle shadow + entrance */
+  box-shadow: 0 1px 3px rgba(122, 46, 58, 0.03), 0 4px 12px rgba(122, 46, 58, 0.04);
+  animation: summaryIn 420ms var(--ease-out) both;
+}
+
+.summary-card:nth-child(1) { animation-delay: 0ms; }
+.summary-card:nth-child(2) { animation-delay: 60ms; }
+.summary-card:nth-child(3) { animation-delay: 120ms; }
+.summary-card:nth-child(4) { animation-delay: 180ms; }
+.summary-card:nth-child(5) { animation-delay: 240ms; }
+.summary-card:nth-child(6) { animation-delay: 300ms; }
+
+@keyframes summaryIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.summary-edit:hover {
+  /* ✦ micro */
+  text-decoration-color: var(--borgona);
+  color: var(--borgona-deep);
 }
 
 .summary-card-head {
@@ -1241,7 +1402,8 @@ body {
   height: 8px;
   background: var(--dorado);
   opacity: 0;
-  animation: confettiFall 3s ease-out forwards;
+  /* ✦ micro — slightly longer fall, more graceful easing */
+  animation: confettiFall 3.6s cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
 }
 
 @keyframes confettiFall {
@@ -1253,18 +1415,21 @@ body {
   width: 96px;
   height: 96px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--rosa-soft), var(--dorado-soft));
+  /* ✦ micro — richer dimensional gradient */
+  background: radial-gradient(circle at 30% 30%, #F4D8C4 0%, var(--rosa-soft) 50%, var(--dorado-soft) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 28px;
   position: relative;
-  animation: emblemPop 700ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: emblemPop 800ms var(--ease-spring) both;
+  box-shadow: 0 8px 28px rgba(201, 169, 97, 0.4), 0 2px 8px rgba(122, 46, 58, 0.15);
 }
 
 @keyframes emblemPop {
-  0% { transform: scale(0); }
-  100% { transform: scale(1); }
+  0% { transform: scale(0) rotate(-90deg); opacity: 0; }
+  60% { opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
 .success-emblem::after {
@@ -1286,6 +1451,8 @@ body {
   color: var(--borgona);
   line-height: 1.05;
   margin: 0 0 14px;
+  /* ✦ micro — staggered entrance */
+  animation: fadeUp 600ms var(--ease-out) 220ms both;
 }
 
 .success-msg {
@@ -1294,6 +1461,8 @@ body {
   line-height: 1.6;
   margin-bottom: 28px;
   max-width: 280px;
+  /* ✦ micro — staggered entrance */
+  animation: fadeUp 600ms var(--ease-out) 360ms both;
 }
 
 .success-meta {
@@ -1308,6 +1477,9 @@ body {
   color: var(--borgona);
   font-weight: 500;
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  /* ✦ micro — staggered entrance */
+  animation: fadeUp 600ms var(--ease-out) 480ms both;
 }
 
 /* ────────────────── Brand "specific park" tags ────────────────── */
@@ -1330,29 +1502,38 @@ body {
   font-family: var(--sans);
 }
 
-.tag-pill:hover { border-color: var(--rosa); color: var(--borgona); }
-.tag-pill.active { background: var(--borgona); color: var(--crema); border-color: var(--borgona); }
+.tag-pill:hover { border-color: var(--rosa); color: var(--borgona); transform: translateY(-1px); }
+.tag-pill:active { transform: translateY(0) scale(0.96); transition-duration: 80ms; }
+.tag-pill.active {
+  /* ✦ micro — gradient on active pill */
+  background: linear-gradient(180deg, #8A3744, var(--borgona-deep));
+  color: var(--crema);
+  border-color: var(--borgona);
+  box-shadow: 0 2px 6px rgba(122, 46, 58, 0.25);
+}
 
-/* Section divider */
+/* Section divider ✦ micro — refined gradient line + ornament */
 .section-divider {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin: 24px 0 14px;
+  margin: 28px 0 16px;
 }
 
 .section-divider::before, .section-divider::after {
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(201, 169, 97, 0.3);
+  /* ✦ micro — gradient fade rather than flat line */
+  background: linear-gradient(90deg, transparent, rgba(201, 169, 97, 0.5), transparent);
 }
 
 .section-divider span {
   font-family: var(--serif);
   font-style: italic;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--dorado);
+  letter-spacing: 0.3px;
 }
 
 /* Floating sparkle accent */
