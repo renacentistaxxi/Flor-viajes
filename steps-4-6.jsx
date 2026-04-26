@@ -144,15 +144,44 @@ function RoomCounter({ label, value, onChange, min = 0, max = 10 }) {
 function StepLodging({ data, update, onNext, onBack }) {
   const includesHotel = data.cotizar === 'tickets-hotel' || data.cotizar === 'hotel';
 
-  // If no hotel — skip straight to comments, no info card
+  const styles = [
+    { id: 'economico', label: 'Económico', icon: <IconLeaf size={16} />, desc: 'Funcional y bien aprovechado' },
+    { id: 'intermedio', label: 'Intermedio', icon: <IconStar size={16} />, desc: 'El equilibrio justo entre precio y experiencia' },
+    { id: 'exclusivo', label: 'Exclusivo', icon: <IconDiamond size={16} />, desc: 'La experiencia más completa, sin atajos' },
+  ];
+
+  // If no hotel — show estilo + comments only
   if (!includesHotel) {
     return (
       <div className="step-body">
         <div className="step-eyebrow">Capítulo 4</div>
         <h2 className="step-title">Casi <em>listo</em></h2>
-        <p className="step-subtitle">Antes de terminar, ¿querés contarme algo más sobre tu viaje?</p>
+        <p className="step-subtitle">Antes de terminar, necesito saber un par de cosas más.</p>
 
-        <div className="field" style={{ marginTop: 8 }}>
+        <div className="section-divider"><span>Estilo de viaje</span></div>
+
+        <div className="style-slider-wrap">
+          <div className="style-track" />
+          <div className="style-stops">
+            {styles.map(s => (
+              <div
+                key={s.id}
+                className={`style-stop ${data.style === s.id ? 'active' : ''}`}
+                onClick={() => update({ style: s.id })}
+              />
+            ))}
+          </div>
+          <div className="style-labels">
+            {styles.map(s => (
+              <span key={s.id} className={data.style === s.id ? 'active' : ''}>{s.label}</span>
+            ))}
+          </div>
+          <div className="style-desc">
+            {styles.find(s => s.id === data.style)?.desc || 'Elegí tu vibe'}
+          </div>
+        </div>
+
+        <div className="field" style={{ marginTop: 18 }}>
           <label className="field-label" style={{ textTransform: 'none', fontSize: 14, letterSpacing: 0 }}>
             Si querés, podés usar este espacio para sumar comentarios, dudas o algún pedido especial para tu viaje. 🌟
           </label>
@@ -181,12 +210,6 @@ function StepLodging({ data, update, onNext, onBack }) {
     { id: 'dentro', icon: <IconCastle size={20} />, title: 'Dentro de los parques (hoteles Disney / Universal)', sub: '' },
     { id: 'fuera', icon: <IconHotel size={20} />, title: 'Fuera de los parques', sub: '' },
     { id: 'mixto', icon: <IconScale size={20} />, title: 'Me gustaría evaluar ambas opciones', sub: '' },
-  ];
-
-  const styles = [
-    { id: 'economico', label: 'Económico', icon: <IconLeaf size={16} />, desc: 'Funcional y bien aprovechado' },
-    { id: 'intermedio', label: 'Intermedio', icon: <IconStar size={16} />, desc: 'El equilibrio justo entre precio y experiencia' },
-    { id: 'exclusivo', label: 'Exclusivo', icon: <IconDiamond size={16} />, desc: 'La experiencia más completa, sin atajos' },
   ];
 
   // ── Rooms — simple counter-based system ──

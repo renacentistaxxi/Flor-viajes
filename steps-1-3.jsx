@@ -30,33 +30,66 @@ function StepHero({ onNext }) {
         ))}
       </div>
 
-      <div className="hero-monogram">F</div>
+      {/* Banner image */}
+      <div className="hero-banner">
+        <img
+          src="banner-flor.png"
+          alt="Flor — Agente de Viajes"
+          style={{
+            width: '100%', height: '100%', objectFit: 'cover',
+            objectPosition: 'center',
+          }}
+          onError={(e) => { e.target.style.display = 'none'; }}
+        />
+      </div>
 
-      <div className="hero-content">
-        <div className="hero-eyebrow">FLOR · AGENTE DE VIAJES</div>
-        <h1 className="hero-title">
-          Cotizá tu
+      <div className="hero-content" style={{ paddingTop: 24 }}>
+        <h1 className="hero-title" style={{ fontSize: 38, textAlign: 'center', marginBottom: 16 }}>
+          ✨ Cotizá tu
           <em>viaje soñado</em>
-          <span className="accent">conmigo</span>
+          <span className="accent">conmigo!</span>
+          <span style={{ fontSize: 20 }}> ✨</span>
         </h1>
 
-        <div className="hero-intro-block">
-          <div className="hero-avatar">F</div>
-          <p className="hero-intro">
-            Hola, soy <strong>Flor</strong>. Diseño viajes a parques temáticos para familias
-            y parejas que buscan algo más que un itinerario: una experiencia inolvidable,
-            armada a medida y sin sorpresas.
-          </p>
+        <div className="hero-intro-block" style={{ flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+          <div className="hero-avatar" style={{
+            width: 72, height: 72, fontSize: 34,
+            backgroundImage: 'url(avatar-flor.png)',
+            backgroundSize: 'cover', backgroundPosition: 'center',
+            color: 'transparent',
+          }}>F</div>
+          <div style={{ fontSize: 14, color: 'var(--marron-soft)', lineHeight: 1.65, textAlign: 'center' }}>
+            <p style={{ marginBottom: 12 }}>
+              Gracias por confiar en mí para planificar tu viaje.
+              Estoy feliz de acompañarte en este proceso tan especial.
+            </p>
+            <p style={{ marginBottom: 12 }}>
+              Soy <strong style={{ color: 'var(--borgona)' }}>Flor</strong>, agente de viajes, y a través de este formulario voy a poder crear una propuesta pensada según tus intereses, estilo de viaje y presupuesto.
+            </p>
+            <p style={{ marginBottom: 12 }}>
+              Mi objetivo es diseñar una experiencia única, cuidando cada detalle para que solo tengas que disfrutar.
+            </p>
+            <p style={{ fontSize: 13, color: 'var(--marron-mute)' }}>
+              📲 Una vez enviada la información, me voy a contactar con vos vía WhatsApp o email.
+            </p>
+            <p style={{ fontSize: 13, color: 'var(--marron-mute)', marginTop: 6 }}>
+              💡 Cuanto más me cuentes, mejor voy a poder diseñar tu viaje ideal.
+            </p>
+          </div>
         </div>
 
-        <p style={{ fontSize: 16, color: 'var(--marron-mute)', lineHeight: 1.5, fontStyle: 'italic', fontFamily: 'var(--serif)' }}>
+        <p style={{
+          fontSize: 17, color: 'var(--borgona)', lineHeight: 1.5,
+          fontStyle: 'italic', fontFamily: 'var(--serif)',
+          textAlign: 'center', marginTop: 8,
+        }}>
           Vos soñás, yo lo hago realidad. <IconSparkle size={14} />
         </p>
       </div>
 
       <div className="hero-cta">
         <button className="btn btn-primary" onClick={onNext}>
-          Empecemos a crear la magia
+          ✨ Ahora sí… ¡empecemos a crear la magia!
           <IconArrowRight size={18} />
         </button>
         <p style={{
