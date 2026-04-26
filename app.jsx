@@ -87,6 +87,22 @@ function FlorApp() {
   // Total progress
   const progress = step / 5;
 
+  // Fix desktop scroll: forward wheel events to the active step-pane
+  useEffectMain(() => {
+    const appEl = document.querySelector('.app');
+    if (!appEl) return;
+    const handler = (e) => {
+      const panes = appEl.querySelectorAll('.step-pane');
+      const activePane = panes[step];
+      if (activePane) {
+        activePane.scrollTop += e.deltaY;
+        e.preventDefault();
+      }
+    };
+    appEl.addEventListener('wheel', handler, { passive: false });
+    return () => appEl.removeEventListener('wheel', handler);
+  }, [step]);
+
   if (submitted) {
     return (
       <div className="app">
